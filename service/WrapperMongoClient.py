@@ -7,5 +7,5 @@ class WrapperMongoClient:
         self.db = client[db]
     def save(self,table, data):
         self.db[table].insert_one(data)
-    def list(self):
-        return 0
+    def list(self,table):
+        return list(self.db[table].find({}))

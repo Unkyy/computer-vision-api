@@ -6,10 +6,10 @@ services:
       - "8080:8080"
     volumes:
       - ".:/api"
-  mongodb:
-    ports:
-      - "27217:27017"
-    image: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+  # mongodb:
+  #   ports:
+  #     - "27217:27017"
+  #   image: mongo
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: root

@@ -22,14 +22,14 @@ class OcrModel():
         text = []
         boxes = []
         for detection in result:
-            top_left = str(detection[0][0])
-            bottom_right = str(detection[0][2])
-            print(type(bottom_right))
+            # print(detection)
+            top_left = detection[0][0]
+            bottom_right = detection[0][2]
+            # print(top_left)
             text.append(detection[1])
-            boxes.append([int(top_left),bottom_right])
-            print(detection[1])
-            print([top_left,bottom_right])
-            break
+            boxes.append([top_left,bottom_right])
+            # print(detection[1])
+            # print([top_left,bottom_right])
             # try:
             #     image = cv2.rectangle(image,top_left,bottom_right,(0,255,0),2)
             # except:
