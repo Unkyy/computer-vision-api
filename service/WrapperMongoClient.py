@@ -8,4 +8,4 @@ class WrapperMongoClient:
     def save(self,table, data):
         self.db[table].insert_one(data)
     def list(self,table):
-        return list(self.db[table].find({}))
+        return list(self.db[table].find({},{'_id': 0}))
