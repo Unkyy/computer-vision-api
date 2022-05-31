@@ -1,18 +1,20 @@
 import numpy as np
 from io import BytesIO
 from PIL import Image
+from service.CvModel import CvModel
 from service.OcrModel import OcrModel
 from service.Web_testing import Web_testing
 
-class Web_testing_ocr(Web_testing):
+class Web_testing_ia(Web_testing):
 
-    def __init__(self, url):
+    def __init__(self, url, type_test= "ocr"):
         self.windows__y__size = 768
         super().__init__(url)
         self.driver.set_window_position(0, 0)
         self.driver.set_window_size(1024, self.windows__y__size)
+        self.type_test = type_test
 
-    def ocr_apply(self,):
+    def ia_apply(self):
         print(self.driver.execute_script('return "toto"'))
         self.driver.save_screenshot("./service/img/test.png")
         # self.actions.move_by_offset(15,15).click().perform()
@@ -20,7 +22,10 @@ class Web_testing_ocr(Web_testing):
         img = Image.open("./service/img/test.png")
         img = img.resize((1024, self.windows__y__size), Image.ANTIALIAS)
         image = np.asarray(img.convert('RGB'))
-        texts, boxes = OcrModel().read_text(image)
+        if(self.type_test == "ocr"):
+            texts, boxes = OcrModel().read_text(image)
+        else: 
+            texts, boxes = CvModel().read_object()
         # top = boxes[texts.index('Tout accepter')][0][0]
         # left = boxes[texts.index('Tout accepter')][0][1] 
         # self.driver.execute_script("document.elementFromPoint("+str(top)+", "+str(left)+")?.click()")
@@ -71,5 +76,5 @@ class Web_testing_ocr(Web_testing):
             if new_height == last_height:
                 break
             last_height = new_height
-            self.ocr_apply() 
+            self.ia_apply() 
     

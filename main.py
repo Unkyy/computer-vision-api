@@ -11,7 +11,7 @@ from models.Url import Url
 from service.OcrModel import OcrModel
 from service.Web_testing import Web_testing
 from service.Web_testing_herf import Web_testing_herf
-from service.Web_testing_ocr import Web_testing_ocr
+from service.Web_testing_ia import Web_testing_ia
 from service.WrapperMongoClient import WrapperMongoClient
 app = FastAPI()
 import json
@@ -50,33 +50,62 @@ async def create_web_test_href():
     website = "https://www.python.org/"
     test = Web_testing_herf(website)
     links = test.start(test.geturls)
-    WrapperMongoClient(host="localhost", port="27217")\
+    WrapperMongoClient()\
         .save("nodes", {"test":"href","website": website, "links":json.dumps(links),'created_time': datetime.now()})
+    return {"filename": "tst"}
+
+@app.post("/webtesting/cv")
+async def create_web_test():
+    website = "https://www.rosartjewels.com/"
+    test = Web_testing_ia(website,type_test="cv")
+    links = test.start(test.scroll)
+    WrapperMongoClient()\
+        .save("nodes", {"test":"or","website": website, "links":json.dumps(links),'created_time': datetime.now()})
     return {"filename": "tst"}
 
 @app.post("/webtesting/ocr")
 async def create_web_test():
     website = "https://www.rosartjewels.com/"
-    test = Web_testing_ocr(website)
+    print("ocr")
+    test = Web_testing_ia(website)
     links = test.start(test.scroll)
-    WrapperMongoClient(host="localhost", port="27217")\
+    WrapperMongoClient()\
         .save("nodes", {"test":"or","website": website, "links":json.dumps(links),'created_time': datetime.now()})
     return {"filename": "tst"}
-@app.get("/test")
-async def get_tests():
-    data = WrapperMongoClient(host="localhost", port="27217").list("nodes")
+
+@app.get("/test/{test1}/{test2}")
+async def get_tests(test1,test2):
+    data = WrapperMongoClient()\
+        .list("nodes",{"website":{"$regex": "/.*www.rosartjewels.com.*/"}}\
+            ,{'_id': 0})
+    data2 = WrapperMongoClient()\
+        .list("nodes",{"website":{"$regex": "/.*www.python.org.*/"}}\
+            ,{'_id': 0})
     node = []
     node.append({"id":data[0]["website"]})
-    for line in data:
-        for link in json.loads(line["links"]):
-            if({"id": link["target"]} not in node):
-                node.append({"id": link["target"]})
-        line["nodes"] = node
-    print(data[-1]["links"])
-    return [data[-1]]
+    detected = False
+    print(data2)
+    for link in json.loads(data[0]["links"]):
+        if({"id": link["target"]} not in node):
+            node.append({"id": link["target"], "color": "green"})
+        for link2 in json.loads(data2[0]["links"]):
+            if(link["target"] == link2["target"]):
+                detected =True
+        if(detected == False):
+            print(node[-1])
+        else:
+            detected =False 
+    data[0]["nodes"] = node
+    return data
+
+@app.get("/tests")
+async def get_tests_name():
+    data = WrapperMongoClient().list("nodes",{},{'_id': 0,"nodes":0,"links":0})
+    return data
+
 @app.post("/security")
 async def create_security_test(url: Url):
-    WrapperMongoClient(host="localhost", port="27217").save("tzes", {"website": "test"})
+    WrapperMongoClient().save("tzes", {"website": "test"})
     return {"test":"test"}
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.8
 COPY . /api
 WORKDIR /api
 COPY requirement.txt requirement.txt                                                                                                                                  1.1s

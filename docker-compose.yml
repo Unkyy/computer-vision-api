@@ -1,15 +1,30 @@
 version: '3'
 services:
-  # api:
-  #   build: .
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ".:/api"
+  # secu:
+  #   image: secu
   #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - ".:/api"
+  #     - "1212:1212"
   mongodb:
     ports:
       - "27217:27017"
     image: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: ro
+      MONGO_INITDB_ROOT_PASSWORD: root
+  hub:
+    image: selenium/hub:latest
+    # privileged: true
+    # shm_size: 2g
+    ports:
+      - "4444:4444"
+  chrome:
+    image: selenium/node-chrome:latest
+    environment:
+      - HUB_HOST=hub
+      - HUB_PORT=4444

@@ -61,7 +61,10 @@ class Web_testing:
         self.linkstmp = []
         self.links = []
         chrome_options = Options()
-        self.driver = webdriver.Chrome('/Users/hugoalberola/Documents/ecole/entreprenaria/computer-vision-api/service/chromedriver')
+        # self.driver = webdriver.Chrome('/Users/hugoalberola/Documents/ecole/entreprenaria/computer-vision-api/service/chromedriver')
+        self.driver = webdriver.Remote(
+          command_executor='http://hub:4444/wd/hub',
+          desired_capabilities=DesiredCapabilities.CHROME)
         self.driver.get(url)
         self.actions = ActionChains(self.driver)
     # def handlecookie(self): 
